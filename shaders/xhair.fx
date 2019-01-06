@@ -119,7 +119,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     float2 center = float2((BUFFER_WIDTH / 2) - 1 + OffsetX, (BUFFER_HEIGHT / 2) - 1 + OffsetY);
 
     float distX = abs(center.x - pos.x);
-	float distY = abs(center.y - pos.y);
+    float distY = abs(center.y - pos.y);
 
     float drawOpacity = XhairOpacity;
 
@@ -195,7 +195,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         }
     }
 
-	return lerp(drawBackground, draw, drawOpacity);
+    return lerp(drawBackground, draw, drawOpacity);
 }
 
 technique xhair {
