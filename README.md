@@ -21,8 +21,8 @@ ReShade Crosshair Shader Overlay
     3. Click "No" when prompted with a "Yes/No" dialog about downloading standard shaders.
     4. Click "Edit ReShade settings.
         1. Change the "Effects Path" to the `shaders` folder created in Step 2.
-        2. (optional) Check "Skip Tutorial" if you're familiar enough with ReShade
-        3. Click "OK"
-    5. Exit the ReShade installer
+        2. (optional) Check "Skip Tutorial" if you're familiar enough with ReShade.
+        3. Click "OK".
+    5. Exit the ReShade installer.
 
-4. Launch your game and open the ReShade overlay (shift-F2 by default)
+4. Launch your game and open the ReShade overlay (shift-F2 by default).
