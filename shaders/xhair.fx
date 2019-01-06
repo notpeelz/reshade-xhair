@@ -1,3 +1,10 @@
+/**
+ * reshade-xhair
+ * ReShade Crosshair Shader Overlay
+ *
+ *  Copyright 2019 LouisTakePILLz
+ */
+
 #include "Reshade.fxh"
 
 uniform int OffsetX <

@@ -1,3 +1,5 @@
+// ReShade. All Rights Reserved
+
 #pragma once
 
 #if !defined(__RESHADE__) || __RESHADE__ < 30000
