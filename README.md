@@ -19,7 +19,7 @@ ReShade Crosshair Shader Overlay
     1. Click "Select game" and select your game executable (`KFGame.exe`) located under `steamapps/common/killingfloor2/Binaries/Win64`.
     2. Check the "Direct3D 10+" option.
     3. Click "No" when prompted with a "Yes/No" dialog about downloading standard shaders.
-    4. Click "Edit ReShade settings.
+    4. Click "Edit ReShade settings".
         1. Change the "Effects Path" to the `shaders` folder created in Step 2.
         2. (optional) Check "Skip Tutorial" if you're familiar enough with ReShade.
         3. Click "OK".
