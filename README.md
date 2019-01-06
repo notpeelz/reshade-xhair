@@ -1,7 +1,7 @@
 # reshade-xhair
 ReShade Crosshair Shader Overlay
 
-![xhair_gui](./img/xhair-gui.png)
+![xhair-gui](./img/xhair-gui.png)
 
 ![xhair1](./img/xhair1.png)
 ![xhair2](./img/xhair2.png)
@@ -13,7 +13,7 @@ ReShade Crosshair Shader Overlay
 
 1. Navigate to your KF2 game folder located under `steamapps/common/killingfloor2/Binaries/Win64`.
 2. Copy the "shaders" folder to your game folder.
-3. Install ReShade 3.x (3.4.1 is suggested) from [`reshade-install/ReShade_Setup_3.4.1.exe`](./reshade-install/ReShade_Setup_3.4.1.exe).
+3. Install ReShade 3.x (3.4.1 is recommended) from [`reshade-install/ReShade_Setup_3.4.1.exe`](./reshade-install/ReShade_Setup_3.4.1.exe).
 
     ![reshade-installer](./img/reshade-installer.png)
     1. Click "Select game" and select your game executable (`KFGame.exe`) located under `steamapps/common/killingfloor2/Binaries/Win64`.
