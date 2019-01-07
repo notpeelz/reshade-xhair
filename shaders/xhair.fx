@@ -1,5 +1,5 @@
 /**
- * reshade-xhair
+ * reshade-xhair 1.1
  * ReShade Crosshair Shader Overlay
  *
  *  Copyright 2019 LouisTakePILLz
