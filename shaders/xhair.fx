@@ -53,6 +53,29 @@ uniform bool OutlineInterpolation  <
     ui_label = "Outline Interpolation";
 > = false;
 
+uniform int DotType <
+    ui_type = "combo";
+    ui_items = "Circle\0Square\0Disabled";
+    ui_label = "Use Dot";
+> = 2;
+
+uniform int DotSize <
+    ui_type = "drag";
+    ui_min = 0; ui_max = 30;
+    ui_label = "Dot Size";
+> = 0;
+
+uniform float DotOpacity <
+    ui_type = "drag";
+    ui_min = 0.0; ui_max = 1.0;
+    ui_label = "Dot Opacity";
+> = 1.0;
+
+uniform float3 DotColor <
+    ui_type = "color";
+    ui_label = "Dot Color";
+> = float3(0.0, 1.0, 0.0);
+
 uniform float3 CrossColor <
     ui_type = "color";
     ui_label = "[Cross] Color";
@@ -127,18 +150,27 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
 
     float totalLength = CrossLength + OutlineThickness  * 2 + 1;
 
-    float4 draw;
+    float4 draw = float4(0, 0, 0, 1.0);
     float2 center = float2((BUFFER_WIDTH / 2) - 1 + OffsetX, (BUFFER_HEIGHT / 2) - 1 + OffsetY);
 
     float distX = abs(center.x - pos.x);
     float distY = abs(center.y - pos.y);
+    float distCenter = distance(center, pos);
 
-    float drawOpacity = XhairOpacity;
+    float drawOpacity = 0;
 
-    if (XhairType == 1) { // Circle
+    if (
+        // Dot: Circle
+        (DotType == 0 && distCenter <= DotSize) ||
+        // Dot: Square
+        (DotType == 1 && distX <= DotSize && distY <= DotSize)
+    ) {
+        draw = float4(DotColor, 1.0);
+        drawOpacity = DotOpacity;
+    } else if (XhairType == 1) { // Circle
         draw = float4(CircleColor, 1.0);
+        drawOpacity = XhairOpacity;
 
-        float distCenter = distance(center, pos);
         bool xhairPixel = int(round(max(CircleThickness - abs(distCenter - CircleGapRadius), 0) / CircleThickness)) == 1;
         float innerOutlinePixel = max(OutlineThickness - abs(distCenter - (CircleGapRadius - CircleThickness * 0.5)), 0) / OutlineThickness;
         float outerOutlinePixel = max(OutlineThickness - abs(distCenter - (CircleGapRadius + CircleThickness * 0.5)), 0) / OutlineThickness;
@@ -146,15 +178,16 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         if (!xhairPixel) {
             drawOpacity = 0;
         }
-        
+
         if (OutlineThickness > 0 && !xhairPixel) {
             draw = float4(OutlineColor, 1.0);
             drawOpacity = !OutlineInterpolation
                 ? OutlineOpacity * int(round(saturate(innerOutlinePixel + outerOutlinePixel)))
                 : OutlineOpacity * saturate(innerOutlinePixel + outerOutlinePixel);
         }
-    } else { // defaults to cross
+    } else { // defaults to XhairType: Cross
         draw = float4(CrossColor, 1.0);
+        drawOpacity = XhairOpacity;
 
         int thickness = CrossThickness * 2;
         int length = CrossLength + CrossGap;
@@ -165,7 +198,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
                 max(thickness - distX, 0) / thickness,
                 max(length - distY, 0)
             ))) == 1;
-            
+
             float outlinePixel =
                 // top and bottom margins
                 max(distY - totalLength, 0) +
@@ -189,7 +222,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
                 max(thickness - distY, 0) / thickness,
                 max(length - distX, 0)
             ))) == 1;
-            
+
             float outlinePixel =
                 // left and right margins
                 max(distX - totalLength, 0) +
