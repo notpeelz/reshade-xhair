@@ -31,11 +31,11 @@ uniform float XhairOpacity <
     ui_label = "Xhair Opacity";
 > = 1.0;
 
-uniform int OutlineThickness <
+uniform float OutlineThickness <
     ui_type = "drag";
-    ui_min = 0.0; ui_max = 4.0;
+    ui_min = 0.0; ui_max = 10.0;
     ui_label = "Outline Thickness";
-> = 1;
+> = 1.0;
 
 uniform float3 OutlineColor <
     ui_type = "color";
@@ -47,6 +47,11 @@ uniform float OutlineOpacity <
     ui_min = 0.0; ui_max = 1.0;
     ui_label = "Outline Opacity";
 > = 1.0;
+
+uniform bool OutlineInterpolation  <
+    ui_type = "toggle";
+    ui_label = "Outline Interpolation";
+> = false;
 
 uniform float3 CrossColor <
     ui_type = "color";
@@ -134,21 +139,19 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         draw = float4(CircleColor, 1.0);
 
         float distCenter = distance(center, pos);
-        bool xhairPixel = int(round(max(CircleThickness - abs(distCenter - CircleGapRadius), 0) / float(CircleThickness))) == 1;
-        bool innerOutlinePixel = int(round(max(
-            OutlineThickness - abs(distCenter - (CircleGapRadius - CircleThickness * 0.5)), 0) / OutlineThickness)
-        ) == 1;
-        bool outerOutlinePixel = int(round(
-            max(OutlineThickness - abs(distCenter - (CircleGapRadius + CircleThickness * 0.5)), 0) / OutlineThickness)
-        ) == 1;
+        bool xhairPixel = int(round(max(CircleThickness - abs(distCenter - CircleGapRadius), 0) / CircleThickness)) == 1;
+        float innerOutlinePixel = max(OutlineThickness - abs(distCenter - (CircleGapRadius - CircleThickness * 0.5)), 0) / OutlineThickness;
+        float outerOutlinePixel = max(OutlineThickness - abs(distCenter - (CircleGapRadius + CircleThickness * 0.5)), 0) / OutlineThickness;
 
         if (!xhairPixel) {
             drawOpacity = 0;
         }
         
-        if (OutlineThickness > 0 && !xhairPixel && (innerOutlinePixel || outerOutlinePixel)) {
+        if (OutlineThickness > 0 && !xhairPixel) {
             draw = float4(OutlineColor, 1.0);
-            drawOpacity = OutlineOpacity;
+            drawOpacity = !OutlineInterpolation
+                ? OutlineOpacity * int(round(saturate(innerOutlinePixel + outerOutlinePixel)))
+                : OutlineOpacity * saturate(innerOutlinePixel + outerOutlinePixel);
         }
     } else { // defaults to cross
         draw = float4(CrossColor, 1.0);
@@ -163,19 +166,21 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
                 max(length - distY, 0)
             ))) == 1;
             
-            bool outlinePixel =
+            float outlinePixel =
                 // top and bottom margins
                 max(distY - totalLength, 0) +
                 // left and right margins
-                && distX < OutlineThickness + thickness/2;
+                max(distX - (OutlineThickness + thickness / 2.0), 0);
 
             if (distY < CrossGap || !xhairPixel) {
                 drawOpacity = 0;
             }
 
-            if (OutlineThickness > 0 && !xhairPixel && outlinePixel && distY >= CrossGap) {
+            if (OutlineThickness > 0 && !xhairPixel && distY >= CrossGap) {
                 draw = float4(OutlineColor, 1.0);
-                drawOpacity = OutlineOpacity;
+                drawOpacity = !OutlineInterpolation
+                    ? OutlineOpacity * int(round(saturate(1.0 - outlinePixel)))
+                    : OutlineOpacity * saturate(1.0 - outlinePixel);
             }
 
         } else { // Horizontal
@@ -185,19 +190,21 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
                 max(length - distX, 0)
             ))) == 1;
             
-            bool outlinePixel =
+            float outlinePixel =
                 // left and right margins
-                distX < totalLength
+                max(distX - totalLength, 0) +
                 // top and bottom margins
-                && distY < OutlineThickness + thickness/2;
+                max(distY - (OutlineThickness + thickness / 2.0), 0);
 
             if (distX < CrossGap || !xhairPixel) {
                 drawOpacity = 0;
             }
 
-            if (OutlineThickness > 0 && !xhairPixel && outlinePixel && distX >= CrossGap) {
+            if (OutlineThickness > 0 && !xhairPixel && distX >= CrossGap) {
                 draw = float4(OutlineColor, 1.0);
-                drawOpacity = OutlineOpacity;
+                drawOpacity = !OutlineInterpolation
+                    ? OutlineOpacity * int(round(saturate(1.0 - outlinePixel)))
+                    : OutlineOpacity * saturate(1.0 - outlinePixel);
             }
 
         }
