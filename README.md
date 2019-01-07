@@ -1,13 +1,13 @@
 # reshade-xhair
 ReShade Crosshair Shader Overlay
 
-![xhair-gui](./img/xhair-gui.png)
+![xhair-gui](./img/xhair_gui.png)
 
-![xhair1](./img/xhair1.png)
-![xhair2](./img/xhair2.png)
-![xhair4](./img/xhair3.png)
-![xhair5](./img/xhair4.png)
-![xhair6](./img/xhair5.png)
+![xhair-small](./img/xhair_small_cross.png)
+![xhair-big](./img/xhair_big.png)
+![xhair-circle](./img/xhair_circle_dot.png)
+![xhair-small-circle](./img/xhair_small_circle.png)
+![xhair-small-dot](./img/xhair_dot.png)
 
 ## How to Install (for Killing Floor 2)
 
@@ -15,7 +15,7 @@ ReShade Crosshair Shader Overlay
 2. Copy the "shaders" folder to your game folder.
 3. Install ReShade 3.x (3.4.1 is recommended) from [`reshade-install/ReShade_Setup_3.4.1.exe`](./reshade-install/ReShade_Setup_3.4.1.exe).
 
-    ![reshade-installer](./img/reshade-installer.png)
+    ![reshade-installer](./img/reshade_installer.png)
     1. Click "Select game" and select your game executable (`KFGame.exe`) located under `steamapps/common/killingfloor2/Binaries/Win64`.
     2. Check the "Direct3D 10+" option.
     3. Click "No" when prompted with a "Yes/No" dialog about downloading standard shaders.
