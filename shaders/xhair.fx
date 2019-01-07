@@ -120,7 +120,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         return drawBackground;
     }
 
-    int totalLength = CrossLength + OutlineThickness - 1;
+    float totalLength = CrossLength + OutlineThickness  * 2 + 1;
 
     float4 draw;
     float2 center = float2((BUFFER_WIDTH / 2) - 1 + OffsetX, (BUFFER_HEIGHT / 2) - 1 + OffsetY);
@@ -154,17 +154,18 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         draw = float4(CrossColor, 1.0);
 
         int thickness = CrossThickness * 2;
+        int length = CrossLength + CrossGap;
 
         if (distX < distY) { // Vertical
 
             bool xhairPixel = int(round(min(
                 max(thickness - distX, 0) / thickness,
-                max(CrossLength - distY, 0)
+                max(length - distY, 0)
             ))) == 1;
             
             bool outlinePixel =
                 // top and bottom margins
-                distY < totalLength
+                max(distY - totalLength, 0) +
                 // left and right margins
                 && distX < OutlineThickness + thickness/2;
 
@@ -181,7 +182,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
 
             bool xhairPixel = int(round(min(
                 max(thickness - distY, 0) / thickness,
-                max(CrossLength - distX, 0)
+                max(length - distX, 0)
             ))) == 1;
             
             bool outlinePixel =
