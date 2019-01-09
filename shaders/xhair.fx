@@ -21,14 +21,14 @@
 uniform int OffsetX <
   ui_category = CATEGORY_GENERAL;
   ui_type = "drag";
-  ui_min = -10; ui_max = 10;
+  ui_min = -(BUFFER_WIDTH / 2); ui_max = (BUFFER_WIDTH / 2);
   ui_label = "X Axis Shift";
 > = 0;
 
 uniform int OffsetY <
   ui_category = CATEGORY_GENERAL;
   ui_type = "drag";
-  ui_min = -10; ui_max = 10;
+  ui_min = -(BUFFER_HEIGHT / 2); ui_max = (BUFFER_HEIGHT / 2);
   ui_label = "Y Axis Shift";
 > = 0;
 
