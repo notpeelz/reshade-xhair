@@ -56,7 +56,7 @@ uniform int f_outlineThickness <
   ui_min = 0; ui_max = MAX_OUTLINE_THICKNESS;
   ui_step = 1;
   ui_label = "Outline Thickness";
-> = 1.0;
+> = 2;
 #define OutlineThickness (max(f_outlineThickness, 0))
 
 uniform float3 OutlineColor <
@@ -158,7 +158,7 @@ uniform int CrossLength <
   ui_type = "drag";
   ui_min = 1; ui_max = 100;
   ui_label = "[Cross] Length";
-> = 10;
+> = 6;
 
 uniform int CrossThickness <
   ui_category = CATEGORY_XHAIR_CROSS;
