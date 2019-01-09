@@ -14,6 +14,8 @@
 #define CATEGORY_XHAIR_CROSS "[Cross] Xhair"
 #define CATEGORY_XHAIR_CIRCLE "[Circle] Xhair"
 
+#define MAX_OUTLINE_THICKNESS 10
+
 /**
  * General Settings
  */
@@ -43,12 +45,19 @@ uniform int HideOnRMB <
  * Outline Settings
  */
 
-uniform float OutlineThickness <
+uniform bool OutlineEnabled <
+  ui_category = CATEGORY_OUTLINE;
+  ui_label = "Enable Outline";
+> = 1;
+
+uniform int f_outlineThickness <
   ui_category = CATEGORY_OUTLINE;
   ui_type = "drag";
-  ui_min = 0.0; ui_max = 10.0;
+  ui_min = 0; ui_max = MAX_OUTLINE_THICKNESS;
+  ui_step = 1;
   ui_label = "Outline Thickness";
 > = 1.0;
+#define OutlineThickness (max(f_outlineThickness, 0))
 
 uniform float3 OutlineColor <
   ui_category = CATEGORY_OUTLINE;
@@ -63,11 +72,27 @@ uniform float OutlineOpacity <
   ui_label = "Outline Opacity";
 > = 1.0;
 
-uniform bool OutlineInterpolation  <
+uniform int f_outlineSharpness <
   ui_category = CATEGORY_OUTLINE;
-  //ui_type = "toggle"; // Is this needed?
-  ui_label = "Outline Interpolation";
-> = false;
+  ui_type = "drag";
+  ui_min = 0; ui_max = MAX_OUTLINE_THICKNESS;
+  ui_step = 1;
+  ui_label = "Outline Sharpness";
+> = 1;
+#define OutlineSharpness (min(max(f_outlineSharpness, 0), OutlineThickness) - 1)
+
+uniform bool OutlineGlowEnabled <
+  ui_category = CATEGORY_OUTLINE;
+  ui_label = "Enable Outline Glow";
+> = true;
+
+uniform float OutlineGlowModifier <
+  ui_category = CATEGORY_OUTLINE;
+  ui_type = "drag";
+  ui_min = 0.0; ui_max = 1.0;
+  ui_step = 0.005;
+  ui_label = "Outline Glow Modifier";
+> = 0.15;
 
 /**
  * Xhair Settings
@@ -131,7 +156,7 @@ uniform float3 CrossColor <
 uniform int CrossLength <
   ui_category = CATEGORY_XHAIR_CROSS;
   ui_type = "drag";
-  ui_min = 0; ui_max = 100;
+  ui_min = 1; ui_max = 100;
   ui_label = "[Cross] Length";
 > = 10;
 
@@ -194,6 +219,24 @@ uniform bool rightMouseToggle <
  * Xhair Shader
  */
 
+static const float2 Origin = float2(0, 0);
+
+#define OUTLINE_CORNER_POS (Origin)
+
+#define BareCrossLength (CrossLength + CrossGap)
+
+#define OUTLINE_GLOW_SIZE (max(OutlineThickness - OutlineSharpness, 0))
+#define OUTLINE_GLOW(intensity) (OutlineGlowEnabled ? lerp(OutlineGlowModifier, 0.0, intensity) : 0.0)
+
+#define invertSaturate(x) (1.0 - saturate((x)))
+#define manhattanDistance(p1, p2) (abs(p1.x - p2.x) + abs(p1.y - p2.y))
+
+#ifdef __DEBUG__
+uniform int random1 < source = "random"; min = 0; max = 255; >;
+uniform int random2 < source = "random"; min = 0; max = 255; >;
+uniform int random3 < source = "random"; min = 0; max = 255; >;
+#endif
+
 float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target {
   float4 drawBackground = tex2D(ReShade::BackBuffer, texcoord);
 
@@ -207,12 +250,10 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     return drawBackground;
   }
 
-  float totalLength = CrossLength + OutlineThickness  * 2 + 1;
-
   float2 center = float2((BUFFER_WIDTH / 2) - 1 + OffsetX, (BUFFER_HEIGHT / 2) - 1 + OffsetY);
 
-  float distX = abs(center.x - pos.x);
-  float distY = abs(center.y - pos.y);
+  int distX = abs(center.x - pos.x);
+  int distY = abs(center.y - pos.y);
   float distCenter = distance(center, pos);
 
   float4 draw;
@@ -234,63 +275,102 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
 
     if (OutlineThickness > 0 && !isXhairPixel) {
       draw = float4(OutlineColor, 1.0);
-      drawOpacity = !OutlineInterpolation
-        ? OutlineOpacity * int(round(saturate(innerOutlinePixel + outerOutlinePixel)))
-        : OutlineOpacity * saturate(innerOutlinePixel + outerOutlinePixel);
+
+      float outlinePixel = innerOutlinePixel + outerOutlinePixel;
+      drawOpacity = saturate(
+        (saturate(outlinePixel) <= OutlineSharpness
+          ? OutlineOpacity * saturate(round(outlinePixel))
+          : OutlineOpacity * saturate(outlinePixel) * OutlineGlowModifier
+        )
+      );
     }
   } else { // defaults to XhairType: Cross
     draw = float4(CrossColor, 1.0);
     drawOpacity = XhairOpacity;
 
-    int thickness = CrossThickness * 2;
-    int length = CrossLength + CrossGap;
-
     if (distX < distY) { // Vertical pixel
 
       bool isXhairPixel = int(round(min(
-        max(thickness - distX, 0) / thickness,
-        max(length - distY, 0)
+        max((CrossThickness * 2) - distX, 0) / (CrossThickness * 2.0),
+        max(BareCrossLength - distY, 0)
       ))) == 1;
 
-      float outlinePixel =
-        // top and bottom margins
-        max(distY - totalLength, 0) +
-        // left and right margins
-        max(distX - (OutlineThickness + thickness / 2.0), 0);
-
+      // Check if we should (not) render a xhair pixel
       if (distY < CrossGap || !isXhairPixel) {
         drawOpacity = 0;
       }
+      // Check if we should render an outline pixel
+      if (OutlineEnabled && !isXhairPixel && distY >= CrossGap) {
 
-      if (OutlineThickness > 0 && !isXhairPixel && distY >= CrossGap) {
+        // Pixel distance from the bare crosshair (w/o the outline)
+        int bareCrossDistX = distX - CrossThickness;
+        int bareCrossDistY = distY - BareCrossLength;
+
+        // Pixel distance from the sharp outline
+        int sharpOutlineDistX = bareCrossDistX - OutlineSharpness;
+        int sharpOutlineDistY = bareCrossDistY - OutlineSharpness;
+
         draw = float4(OutlineColor, 1.0);
-        drawOpacity = !OutlineInterpolation
-          ? OutlineOpacity * int(round(saturate(1.0 - outlinePixel)))
-          : OutlineOpacity * saturate(1.0 - outlinePixel);
+
+        #ifdef __DEBUG__
+        if (sharpOutlineDistX == 0 && sharpOutlineDistY == 0) {
+          draw = float4(random1/255.0, random2/255.0, random3/255.0, 1);
+          return draw;
+        }
+        #endif
+
+        if (sharpOutlineDistX < OUTLINE_GLOW_SIZE) {
+          float2 relativePos = float2(max(sharpOutlineDistX, 0), max(sharpOutlineDistY, 0));
+          float dist = manhattanDistance(relativePos, OUTLINE_CORNER_POS);
+          float glowIntensity = saturate(dist / float(OUTLINE_GLOW_SIZE));
+          drawOpacity = dist > OutlineSharpness
+            ? OUTLINE_GLOW(glowIntensity)
+            : 1.0;
+          drawOpacity *= OutlineOpacity;
+        }
       }
 
     } else { // Horizontal pixel
 
       bool isXhairPixel = int(round(min(
-        max(thickness - distY, 0) / thickness,
-        max(length - distX, 0)
+        max((CrossThickness * 2.0) - distY, 0) / (CrossThickness * 2.0),
+        max(BareCrossLength - distX, 0)
       ))) == 1;
 
-      float outlinePixel =
-        // left and right margins
-        max(distX - totalLength, 0) +
-        // top and bottom margins
-        max(distY - (OutlineThickness + thickness / 2.0), 0);
-
+      // Check if we should (not) render a xhair pixel
       if (distX < CrossGap || !isXhairPixel) {
         drawOpacity = 0;
       }
 
-      if (OutlineThickness > 0 && !isXhairPixel && distX >= CrossGap) {
+      // Check if we should render an outline pixel
+      if (OutlineEnabled && !isXhairPixel && distX >= CrossGap) {
+
+        // Pixel distance from the bare crosshair (w/o the outline)
+        int bareCrossDistX = distX - BareCrossLength;
+        int bareCrossDistY = distY - CrossThickness;
+
+        // Pixel distance from the sharp outline
+        int sharpOutlineDistX = bareCrossDistX - OutlineSharpness;
+        int sharpOutlineDistY = bareCrossDistY - OutlineSharpness;
+
         draw = float4(OutlineColor, 1.0);
-        drawOpacity = !OutlineInterpolation
-          ? OutlineOpacity * int(round(saturate(1.0 - outlinePixel)))
-          : OutlineOpacity * saturate(1.0 - outlinePixel);
+
+        #ifdef __DEBUG__
+        if (sharpOutlineDistX == 0 && sharpOutlineDistY == 0) {
+          draw = float4(random1/255.0, random2/255.0, random3/255.0, 1);
+          return draw;
+        }
+        #endif
+
+        if (sharpOutlineDistY < OUTLINE_GLOW_SIZE) {
+          float2 relativePos = float2(max(sharpOutlineDistX, 0), max(sharpOutlineDistY, 0));
+          float dist = manhattanDistance(relativePos, OUTLINE_CORNER_POS);
+          float glowIntensity = saturate(dist / float(OUTLINE_GLOW_SIZE));
+          drawOpacity = dist > OutlineSharpness
+            ? OUTLINE_GLOW(glowIntensity)
+            : 1.0;
+          drawOpacity *= OutlineOpacity;
+        }
       }
 
     }
