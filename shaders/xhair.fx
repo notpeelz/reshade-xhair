@@ -379,7 +379,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     if (distX < distY) { // Vertical pixel
 
       bool isXhairPixel = int(round(min(
-        max((CrossThickness * 2) - distX, 0) / (CrossThickness * 2.0),
+        max((CrossThickness * 2) - distX, 0) / max(CrossThickness * 2.0, 1),
         max(BareCrossLength - distY, 0)
       ))) == 1;
 
@@ -422,7 +422,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     } else { // Horizontal pixel
 
       bool isXhairPixel = int(round(min(
-        max((CrossThickness * 2.0) - distY, 0) / (CrossThickness * 2.0),
+        max((CrossThickness * 2.0) - distY, 0) / max(CrossThickness * 2.0, 1),
         max(BareCrossLength - distX, 0)
       ))) == 1;
 
