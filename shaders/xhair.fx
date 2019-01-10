@@ -8,7 +8,6 @@
 #include "Reshade.fxh"
 
 #define CATEGORY_GENERAL "General"
-#define CATEGORY_XHAIR "Xhair"
 #define CATEGORY_XHAIR_COMPOSITE "Composite Xhair"
 #define CATEGORY_XHAIR_CROSS "[Cross] Xhair"
 #define CATEGORY_XHAIR_CIRCLE "[Circle] Xhair"
@@ -34,30 +33,26 @@ uniform int OffsetY <
   ui_label = "Y Axis Shift";
 > = 0;
 
-uniform int HideOnRMB <
-  ui_category = CATEGORY_GENERAL;
-  ui_type = "combo";
-  ui_items = "Hold\0Toggle\0Disabled";
-  ui_label = "Hide on RMB";
-> = 0;
-
-/**
- * Xhair Settings
- */
-
 uniform int XhairType <
-  ui_category = CATEGORY_XHAIR;
+  ui_category = CATEGORY_GENERAL;
   ui_type = "combo";
   ui_items = "Cross\0Circle";
   ui_label = "Xhair Type";
 > = 0;
 
 uniform float XhairOpacity <
-  ui_category = CATEGORY_XHAIR;
+  ui_category = CATEGORY_GENERAL;
   ui_type = "drag";
   ui_min = 0.0; ui_max = 1.0;
   ui_label = "Xhair Opacity";
 > = 1.0;
+
+uniform int HideOnRMB <
+  ui_category = CATEGORY_GENERAL;
+  ui_type = "combo";
+  ui_items = "Hold\0Toggle\0Disabled";
+  ui_label = "Hide on RMB";
+> = 0;
 
 /**
  * Composite Xhair Settings
