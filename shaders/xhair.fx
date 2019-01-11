@@ -138,30 +138,30 @@ uniform float CrossOutlineOpacity <
   ui_label = "Outline Opacity";
 > = 1.0;
 
-uniform int f_crossOutlineThickness <
-  ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
-  ui_min = 0; ui_max = MAX_CROSS_OUTLINE_THICKNESS;
-  ui_step = 1;
-  ui_label = "Outline Thickness";
-> = 2;
-#define CrossOutlineThickness (max(f_crossOutlineThickness, 0))
-
 uniform int f_crossOutlineSharpness <
   ui_category = CATEGORY_XHAIR_CROSS;
   ui_type = "drag";
-  ui_min = 0; ui_max = MAX_CROSS_OUTLINE_THICKNESS;
+  ui_min = 0; ui_max = (MAX_CROSS_OUTLINE_THICKNESS);
   ui_step = 1;
   ui_label = "Outline Sharpness";
 > = 1;
-#define CrossOutlineSharpness (min(max(f_crossOutlineSharpness, 0), CrossOutlineThickness) - 1)
+#define CrossOutlineSharpness (max(f_crossOutlineSharpness, 0))
 
-uniform float CrossOutlineGlowModifier <
+uniform int f_crossOutlineGlow <
+  ui_category = CATEGORY_XHAIR_CROSS;
+  ui_type = "drag";
+  ui_min = 0; ui_max = MAX_CROSS_OUTLINE_THICKNESS;
+  ui_step = 1;
+  ui_label = "Outline Glow";
+> = 2;
+#define CrossOutlineGlow (max(f_crossOutlineGlow, 0))
+
+uniform float CrossOutlineGlowOpacity <
   ui_category = CATEGORY_XHAIR_CROSS;
   ui_type = "drag";
   ui_min = 0.0; ui_max = 1.0;
   ui_step = 0.005;
-  ui_label = "Outline Glow Modifier";
+  ui_label = "Outline Glow Opacity";
 > = 0.15;
 
 uniform bool CrossOutlineGlowEnabled <
@@ -215,15 +215,6 @@ uniform float CircleOutlineOpacity <
   ui_label = "Outline Opacity";
 > = 1.0;
 
-uniform float f_circleOuterOutlineThickness <
-  ui_category = CATEGORY_XHAIR_CIRCLE;
-  ui_type = "drag";
-  ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
-  ui_step = 0.01;
-  ui_label = "Outer Outline Thickness";
-> = 2.0;
-#define CircleOuterOutlineThickness (max(f_circleOuterOutlineThickness, 0))
-
 uniform float f_circleOuterOutlineSharpness <
   ui_category = CATEGORY_XHAIR_CIRCLE;
   ui_type = "drag";
@@ -231,24 +222,24 @@ uniform float f_circleOuterOutlineSharpness <
   ui_step = 0.01;
   ui_label = "Outer Outline Sharpness";
 > = 1.0;
-#define CircleOuterOutlineSharpness (min(max(f_circleOuterOutlineSharpness, 0), CircleOuterOutlineThickness))
+#define CircleOuterOutlineSharpness (min(max(f_circleOuterOutlineSharpness, 0), CircleOuterOutlineGlow))
 
-uniform float CircleOuterOutlineGlowModifier <
-  ui_category = CATEGORY_XHAIR_CIRCLE;
-  ui_type = "drag";
-  ui_min = 0.0; ui_max = 1.0;
-  ui_step = 0.005;
-  ui_label = "Outer Outline Glow Modifier";
-> = 0.15;
-
-uniform float f_circleInnerOutlineThickness <
+uniform float f_circleOuterOutlineGlow <
   ui_category = CATEGORY_XHAIR_CIRCLE;
   ui_type = "drag";
   ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
-  ui_label = "Inner Outline Thickness";
+  ui_label = "Outer Outline Glow";
 > = 2.0;
-#define CircleInnerOutlineThickness (max(f_circleInnerOutlineThickness, 0))
+#define CircleOuterOutlineGlow (max(f_circleOuterOutlineGlow, 0))
+
+uniform float CircleOuterOutlineGlowOpacity <
+  ui_category = CATEGORY_XHAIR_CIRCLE;
+  ui_type = "drag";
+  ui_min = 0.0; ui_max = 1.0;
+  ui_step = 0.005;
+  ui_label = "Outer Outline Glow Opacity";
+> = 0.15;
 
 uniform float f_circleInnerOutlineSharpness <
   ui_category = CATEGORY_XHAIR_CIRCLE;
@@ -257,14 +248,23 @@ uniform float f_circleInnerOutlineSharpness <
   ui_step = 0.01;
   ui_label = "Inner Outline Sharpness";
 > = 1.0;
-#define CircleInnerOutlineSharpness (min(max(f_circleInnerOutlineSharpness, 0), CircleInnerOutlineThickness))
+#define CircleInnerOutlineSharpness (min(max(f_circleInnerOutlineSharpness, 0), CircleInnerOutlineGlow))
 
-uniform float CircleInnerOutlineGlowModifier <
+uniform float f_circleInnerOutlineGlow <
+  ui_category = CATEGORY_XHAIR_CIRCLE;
+  ui_type = "drag";
+  ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
+  ui_step = 0.01;
+  ui_label = "Inner Outline Glow";
+> = 2.0;
+#define CircleInnerOutlineGlow (max(f_circleInnerOutlineGlow, 0))
+
+uniform float CircleInnerOutlineGlowOpacity <
   ui_category = CATEGORY_XHAIR_CIRCLE;
   ui_type = "drag";
   ui_min = 0.0; ui_max = 1.0;
   ui_step = 0.005;
-  ui_label = "Inner Outline Glow Modifier";
+  ui_label = "Inner Outline Glow Opacity";
 > = 0.15;
 
 uniform bool CircleOutlineGlowEnabled <
@@ -290,19 +290,34 @@ uniform bool rightMouseToggle <
 >;
 
 /**
- * Xhair Shader
+ * Helpers
  */
-
-static const float2 Origin = float2(0, 0);
 
 #define BareCrossLength (CrossLength + CrossGap)
 
-#define CROSS_OUTLINE_CORNER_POS (Origin)
-#define CROSS_OUTLINE_GLOW_SIZE (max(CrossOutlineThickness - CrossOutlineSharpness, 0))
-#define CROSS_OUTLINE_GLOW(intensity) (CrossOutlineGlowEnabled ? lerp(CrossOutlineGlowModifier, 0.0, intensity) : 0.0)
+#define EULER (0.57721566490153286061)
 
-#define CIRCLE_OUTER_OUTLINE_GLOW(intensity) (CircleOutlineGlowEnabled ? lerp(CircleOuterOutlineGlowModifier, 0.0, intensity) : 0.0)
-#define CIRCLE_INNER_OUTLINE_GLOW(intensity) (CircleOutlineGlowEnabled ? lerp(CircleInnerOutlineGlowModifier, 0.0, intensity) : 0.0)
+#define CROSS_OUTLINE_GLOW_RADIAL(intensity) (lerp(0.0, CrossOutlineGlowOpacity, intensity))
+// http://cubic-bezier.com/#.06,1.2,0,.9
+#define CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1(intensity) (cubicBezier(float2(.06, 1.2), float2(0, .9), intensity) * CrossOutlineGlowOpacity)
+
+#define CROSS_OUTLINE_GLOW_CURVE CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1
+#define CROSS_OUTLINE_GLOW(intensity) (CrossOutlineGlowEnabled ? saturate(CROSS_OUTLINE_GLOW_CURVE(intensity)) : 0.0)
+
+#define CIRCLE_OUTER_OUTLINE_GLOW(intensity) (CircleOutlineGlowEnabled ? lerp(CircleOuterOutlineGlowOpacity, 0.0, intensity) : 0.0)
+#define CIRCLE_INNER_OUTLINE_GLOW(intensity) (CircleOutlineGlowEnabled ? lerp(CircleInnerOutlineGlowOpacity, 0.0, intensity) : 0.0)
+
+float2 cubicBezier(float2 p1, float2 p2, float i) {
+  float x = pow(1 - i, 3) * 0 +
+    3 * i * pow(1 - i, 2) * p1.x +
+    3 * pow(i, 2) * (1 - i) * p2.x +
+    pow(i, 3) * 1;
+  float y = pow(1 - i, 3) * 0 +
+    3 * i * pow(1 - i, 2) * p1.y +
+    3 * pow(i, 2) * (1 - i) * p2.y +
+    pow(i, 3) * 1;
+  return float2(x, y);
+}
 
 #define invertSaturate(x) (1.0 - saturate((x)))
 #define manhattanDistance(p1, p2) (abs(p1.x - p2.x) + abs(p1.y - p2.y))
@@ -312,6 +327,10 @@ uniform int random1 < source = "random"; min = 0; max = 255; >;
 uniform int random2 < source = "random"; min = 0; max = 255; >;
 uniform int random3 < source = "random"; min = 0; max = 255; >;
 #endif
+
+/*
+ * Xhair Shader
+ */
 
 float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target {
   float4 drawBackground = tex2D(ReShade::BackBuffer, texcoord);
@@ -352,24 +371,24 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
       float bareCrosshairInnerRadius = CircleGapRadius;
       float bareCrosshairOuterRadius = CircleGapRadius + CircleThickness;
 
-      float outerOutlineFullRadius = bareCrosshairOuterRadius + CircleOuterOutlineThickness;
+      float outerOutlineFullRadius = bareCrosshairOuterRadius + CircleOuterOutlineGlow;
       float outerOutlineSharpRadius = bareCrosshairOuterRadius + CircleOuterOutlineSharpness;
 
-      float innerOutlineFullRadius = bareCrosshairInnerRadius - CircleInnerOutlineThickness;
+      float innerOutlineFullRadius = bareCrosshairInnerRadius - CircleInnerOutlineGlow;
       float innerOutlineSharpRadius = bareCrosshairInnerRadius - CircleInnerOutlineSharpness;
 
       draw = float4(CircleOutlineColor, 1.0);
 
       if (distCenter < outerOutlineFullRadius && distCenter > CircleGapRadius) {
-        float glowIntensity = invertSaturate((outerOutlineFullRadius - distCenter) / (CircleOuterOutlineThickness - CircleOuterOutlineSharpness));
+        float glowIntensity = invertSaturate((outerOutlineFullRadius - distCenter) / (CircleOuterOutlineGlow - CircleOuterOutlineSharpness));
         drawOpacity = distCenter < outerOutlineSharpRadius
-          ? CircleOutlineOpacity
-          : CIRCLE_OUTER_OUTLINE_GLOW(glowIntensity);
+          ? CircleOutlineOpacity * XhairOpacity
+          : CIRCLE_OUTER_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
       } else if (distCenter > innerOutlineFullRadius && distCenter < bareCrosshairInnerRadius) {
-        float glowIntensity = saturate((innerOutlineFullRadius - distCenter) / (CircleInnerOutlineThickness - CircleInnerOutlineSharpness));
+        float glowIntensity = saturate((innerOutlineFullRadius - distCenter) / (CircleInnerOutlineGlow - CircleInnerOutlineSharpness));
         drawOpacity = distCenter > innerOutlineSharpRadius
-          ? CircleOutlineOpacity
-          : CIRCLE_INNER_OUTLINE_GLOW(glowIntensity);
+          ? CircleOutlineOpacity * XhairOpacity
+          : CIRCLE_INNER_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
       }
     }
   } else { // defaults to XhairType: Cross
@@ -379,7 +398,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     if (distX < distY) { // Vertical pixel
 
       bool isXhairPixel = int(round(min(
-        max((CrossThickness * 2) - distX, 0) / max(CrossThickness * 2.0, 1),
+        max((CrossThickness * 2.0) - distX, 0) / max(CrossThickness * 2.0, 1),
         max(BareCrossLength - distY, 0)
       ))) == 1;
 
@@ -407,16 +426,16 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         }
         #endif
 
-        if (sharpOutlineDistX < CROSS_OUTLINE_GLOW_SIZE) {
-          float2 relativePos = float2(max(sharpOutlineDistX, 0), max(sharpOutlineDistY, 0));
-          float dist = manhattanDistance(relativePos, CROSS_OUTLINE_CORNER_POS);
-          float glowIntensity = saturate(dist / float(CROSS_OUTLINE_GLOW_SIZE));
-          drawOpacity = dist > CrossOutlineSharpness
-            ? CROSS_OUTLINE_GLOW(glowIntensity)
-            : 1.0;
-          drawOpacity *= CrossOutlineOpacity;
+        float2 relativePos = float2(max(bareCrossDistX, 0), max(bareCrossDistY, 0));
+        float dist = distance(relativePos, float2(0, 0));
+        if (dist < CrossOutlineSharpness) {
+          drawOpacity = XhairOpacity;
+        } else if (dist < (CrossOutlineSharpness + CrossOutlineGlow)) {
+          float glowIntensity = saturate(1.0 - ((dist - CrossOutlineSharpness) / float(CrossOutlineGlow)));
+          drawOpacity = CROSS_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
         }
 
+        drawOpacity *= CrossOutlineOpacity * XhairOpacity;
       }
 
     } else { // Horizontal pixel
@@ -451,16 +470,16 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
         }
         #endif
 
-        if (sharpOutlineDistY < CROSS_OUTLINE_GLOW_SIZE) {
-          float2 relativePos = float2(max(sharpOutlineDistX, 0), max(sharpOutlineDistY, 0));
-          float dist = manhattanDistance(relativePos, CROSS_OUTLINE_CORNER_POS);
-          float glowIntensity = saturate(dist / float(CROSS_OUTLINE_GLOW_SIZE));
-          drawOpacity = dist > CrossOutlineSharpness
-            ? CROSS_OUTLINE_GLOW(glowIntensity)
-            : 1.0;
-          drawOpacity *= CrossOutlineOpacity;
+        float2 relativePos = float2(max(bareCrossDistX, 0), max(bareCrossDistY, 0));
+        float dist = distance(relativePos, float2(0, 0));
+        if (dist < CrossOutlineSharpness) {
+          drawOpacity = XhairOpacity;
+        } else if (dist < (CrossOutlineSharpness + CrossOutlineGlow)) {
+          float glowIntensity = saturate(1.0 - ((dist - CrossOutlineSharpness) / float(CrossOutlineGlow)));
+          drawOpacity = CROSS_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
         }
 
+        drawOpacity *= CrossOutlineOpacity * XhairOpacity;
       }
 
     }
