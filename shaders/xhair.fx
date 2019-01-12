@@ -24,6 +24,7 @@ uniform int OffsetX <
   ui_type = "drag";
   ui_min = -(BUFFER_WIDTH / 2); ui_max = (BUFFER_WIDTH / 2);
   ui_label = "X Axis Shift";
+  ui_tooltip = "Offsets the crosshair horizontally from the center of the screen.";
 > = 0;
 
 uniform int OffsetY <
@@ -31,6 +32,7 @@ uniform int OffsetY <
   ui_type = "drag";
   ui_min = -(BUFFER_HEIGHT / 2); ui_max = (BUFFER_HEIGHT / 2);
   ui_label = "Y Axis Shift";
+  ui_tooltip = "Offsets the crosshair vertically from the center of the screen.";
 > = 0;
 
 uniform int XhairType <
@@ -52,6 +54,7 @@ uniform int HideOnRMB <
   ui_type = "combo";
   ui_items = "Hold\0Toggle\0Disabled";
   ui_label = "Hide on RMB";
+  ui_tooltip = "Controls whether the crosshair should be hidden when clicking the right mouse button.";
 > = 0;
 
 /**
@@ -63,6 +66,7 @@ uniform int DotType <
   ui_type = "combo";
   ui_items = "Circle\0Square\0Disabled";
   ui_label = "Use Dot";
+  ui_tooltip = "Controls whether a dot should be rendered **on top** of the selected crosshair.";
 > = 2;
 
 uniform float3 DotColor <
@@ -116,14 +120,19 @@ uniform int CrossGap <
   ui_label = "Gap";
 > = 3;
 
+/**
+ * Cross Xhair Outline Settings
+ */
+
 uniform bool CrossOutlineEnabled <
   ui_category = CATEGORY_XHAIR_CROSS;
   ui_label = "Enable Outline";
 > = 1;
 
-/**
- * Cross Xhair Outline Settings
- */
+uniform bool CrossOutlineGlowEnabled <
+  ui_category = CATEGORY_XHAIR_CROSS;
+  ui_label = "Enable Outline Glow";
+> = true;
 
 uniform float3 CrossOutlineColor <
   ui_category = CATEGORY_XHAIR_CROSS;
@@ -144,6 +153,7 @@ uniform int f_crossOutlineSharpness <
   ui_min = 0; ui_max = (MAX_CROSS_OUTLINE_THICKNESS);
   ui_step = 1;
   ui_label = "Outline Sharpness";
+  ui_tooltip = "Controls how many pixels should be rendered at 100% opaque around the crosshair (recommended: 1 or 0).";
 > = 1;
 #define CrossOutlineSharpness (max(f_crossOutlineSharpness, 0))
 
@@ -153,6 +163,7 @@ uniform int f_crossOutlineGlow <
   ui_min = 0; ui_max = MAX_CROSS_OUTLINE_THICKNESS;
   ui_step = 1;
   ui_label = "Outline Glow";
+  ui_tooltip = "Controls how many outline **gradient** pixels should be rendered around the sharp outline.";
 > = 2;
 #define CrossOutlineGlow (max(f_crossOutlineGlow, 0))
 
@@ -163,11 +174,6 @@ uniform float CrossOutlineGlowOpacity <
   ui_step = 0.005;
   ui_label = "Outline Glow Opacity";
 > = 0.15;
-
-uniform bool CrossOutlineGlowEnabled <
-  ui_category = CATEGORY_XHAIR_CROSS;
-  ui_label = "Enable Outline Glow";
-> = true;
 
 /**
  * Circle Xhair Settings
@@ -202,6 +208,11 @@ uniform bool CircleOutlineEnabled <
   ui_label = "Enable Outline";
 > = 1;
 
+uniform bool CircleOutlineGlowEnabled <
+  ui_category = CATEGORY_XHAIR_CIRCLE;
+  ui_label = "Enable Outline Glow";
+> = true;
+
 uniform float3 CircleOutlineColor <
   ui_category = CATEGORY_XHAIR_CIRCLE;
   ui_type = "color";
@@ -221,6 +232,7 @@ uniform float f_circleOuterOutlineSharpness <
   ui_min = 0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
   ui_label = "Outer Outline Sharpness";
+  ui_tooltip = "Controls how many outline pixels (outside of the circle)\nshould be rendered as 100% opaque.";
 > = 1.0;
 #define CircleOuterOutlineSharpness (min(max(f_circleOuterOutlineSharpness, 0), CircleOuterOutlineGlow))
 
@@ -230,6 +242,7 @@ uniform float f_circleOuterOutlineGlow <
   ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
   ui_label = "Outer Outline Glow";
+  ui_tooltip = "Controls how many outline **gradient** pixels (outside of the circle)\nshould be rendered around the sharp outline.";
 > = 2.0;
 #define CircleOuterOutlineGlow (max(f_circleOuterOutlineGlow, 0))
 
@@ -247,6 +260,7 @@ uniform float f_circleInnerOutlineSharpness <
   ui_min = 0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
   ui_label = "Inner Outline Sharpness";
+  ui_tooltip = "Controls how many outline pixels (inside of the circle)\nshould be rendered as 100% opaque.";
 > = 1.0;
 #define CircleInnerOutlineSharpness (min(max(f_circleInnerOutlineSharpness, 0), CircleInnerOutlineGlow))
 
@@ -256,6 +270,7 @@ uniform float f_circleInnerOutlineGlow <
   ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
   ui_label = "Inner Outline Glow";
+  ui_tooltip = "Controls how many gradient outline pixels (inside of the circle)\nshould be rendered around the sharp outline.";
 > = 2.0;
 #define CircleInnerOutlineGlow (max(f_circleInnerOutlineGlow, 0))
 
@@ -266,11 +281,6 @@ uniform float CircleInnerOutlineGlowOpacity <
   ui_step = 0.005;
   ui_label = "Inner Outline Glow Opacity";
 > = 0.15;
-
-uniform bool CircleOutlineGlowEnabled <
-  ui_category = CATEGORY_XHAIR_CIRCLE;
-  ui_label = "Enable Outline Glow";
-> = true;
 
 /**
  * RMB States
