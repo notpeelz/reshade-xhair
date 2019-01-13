@@ -1,6 +1,6 @@
 # reshade-xhair
 
-ReShade Crosshair Shader Overlay
+A heavily customizable, fullscreen-compatible crosshair overlay shader.
 
 ![xhair-gui](./img/xhair_gui.png)
 
