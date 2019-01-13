@@ -21,6 +21,36 @@ A heavily customizable, fullscreen-compatible crosshair overlay shader.
 
 &#42; through the Steam Workshop (only for Killing Floor 2)
 
+## FAQ
+
+Q: Does this work in fullscreen?
+
+A: Yes. Rather than rendering the crosshair outside the game, the injected ReShade overlay renders within the the game.
+
+---
+
+Q: Will this get me banned?
+
+A: No, reshade-xhair will not get you banned by itself. **HOWEVER**, the program that it runs on (ReShade) is blacklisted by some games/anti-cheats. **Make sure you look up whether ReShade can be used safely on the desired game before installing it**. Use at your own risk! Killing Floor 2 and PayDay 2 should be safe to use with.
+
+---
+
+Q: How do I uninstall?
+
+A: Go to your game folder and delete any of the following files: `d3d8.dll`, `d3d9.dll`, `d3d10.dll`, `d3d11.dll`, `opengl.dll`, `dxgi.dll`.
+
+---
+
+Q: My game is crashing, how do I fix it?
+
+A: Go to your game folder and rename `dxgi.dll` to `d3d11.dll`.
+
+---
+
+Q: I'm getting suttering/fps drops/misc issues
+
+A: reshade-xhair is unlikely to be the issue. It's probably a ReShade issue. Google it.
+
 ## How to Install (for any game)
 
 1. Download the latest version of the shaders (`shaders.zip`) from the [**Releases**](https://github.com/LouisTakePILLz/reshade-xhair/releases) tab on GitHub
