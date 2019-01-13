@@ -60,7 +60,7 @@ A: reshade-xhair is unlikely to be the issue. It's probably a ReShade issue. Goo
 
     ![reshade-installer](./img/reshade_installer.png)
     1. Click "Select game" and select your game executable (`KFGame.exe`) located under `steamapps/common/killingfloor2/Binaries/Win64`.
-    2. Check the "Direct3D 10+" option.
+    2. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10+" option.
     3. Click "No" when prompted with a "Yes/No" dialog about downloading standard shaders.
     4. Click "Edit ReShade settings".
         1. Change the "Effects Path" to the `shaders` folder (the same folder from **Step 3**)
