@@ -1,4 +1,5 @@
 # reshade-xhair
+
 ReShade Crosshair Shader Overlay
 
 ![xhair-gui](./img/xhair_gui.png)
@@ -8,6 +9,17 @@ ReShade Crosshair Shader Overlay
 ![xhair-circle](./img/xhair_circle_dot.png)
 ![xhair-small-circle](./img/xhair_small_circle.png)
 ![xhair-small-dot](./img/xhair_dot.png)
+
+| Feature             | Supported               |
+| ------------------- | ----------------------- |
+| Fullscreen          | :heavy_check_mark:      |
+| No input lag        | :heavy_check_mark:      |
+| No FPS impact       | :heavy_check_mark:      |
+| Customizable        | :heavy_check_mark:      |
+| One-time setup      | :heavy_check_mark:      |
+| Automatic updates   | :heavy_check_mark: <sup>&#42;</sup> |
+
+&#42; through the Steam Workshop (only for Killing Floor 2)
 
 ## How to Install (for any game)
 
