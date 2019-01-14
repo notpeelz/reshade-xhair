@@ -59,7 +59,7 @@ A: reshade-xhair is unlikely to be the issue. It's probably a ReShade issue. Goo
 4. Install ReShade 3.x (3.4.1 is recommended) from [`reshade-install/ReShade_Setup_3.4.1.exe`](https://github.com/LouisTakePILLz/reshade-xhair/blob/master/reshade-install/ReShade_Setup_3.4.1.exe).
 
     ![reshade-installer](./img/reshade_installer.png)
-    1. Click "Select game" and select your game executable (`KFGame.exe`) located under `steamapps/common/killingfloor2/Binaries/Win64`.
+    1. Click "Select game" and select your game executable (e.g. `steamapps/common/killingfloor2/Binaries/Win64/KFGame.exe` for Killing Floor 2)
     2. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10+" option.
     3. Click "No" when prompted with a "Yes/No" dialog about downloading standard shaders.
     4. Click "Edit ReShade settings".
