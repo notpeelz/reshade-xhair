@@ -342,6 +342,139 @@ uniform int random3 < source = "random"; min = 0; max = 255; >;
  * Xhair Shader
  */
 
+void drawCircleXhair(float distCenter, out float4 draw, inout float drawOpacity) {
+  draw = float4(CircleColor, 1.0);
+  drawOpacity = XhairOpacity;
+
+  bool isXhairPixel = int(round(
+    max(CircleThickness - abs(distCenter - (CircleGapRadius + CircleThickness / 2.0)), 0) / CircleThickness
+  )) == 1;
+
+  if (!isXhairPixel) {
+    drawOpacity = 0;
+  }
+
+  if (CircleOutlineEnabled && !isXhairPixel) {
+
+    float bareCrosshairInnerRadius = CircleGapRadius;
+    float bareCrosshairOuterRadius = CircleGapRadius + CircleThickness;
+
+    float outerOutlineFullRadius = bareCrosshairOuterRadius + CircleOuterOutlineGlow;
+    float outerOutlineSharpRadius = bareCrosshairOuterRadius + CircleOuterOutlineSharpness;
+
+    float innerOutlineFullRadius = bareCrosshairInnerRadius - CircleInnerOutlineGlow;
+    float innerOutlineSharpRadius = bareCrosshairInnerRadius - CircleInnerOutlineSharpness;
+
+    draw = float4(CircleOutlineColor, 1.0);
+
+    if (distCenter < outerOutlineFullRadius && distCenter > CircleGapRadius) {
+      float glowIntensity = invertSaturate((outerOutlineFullRadius - distCenter) / (CircleOuterOutlineGlow - CircleOuterOutlineSharpness));
+      drawOpacity = distCenter < outerOutlineSharpRadius
+        ? CircleOutlineOpacity * XhairOpacity
+        : CIRCLE_OUTER_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
+    } else if (distCenter > innerOutlineFullRadius && distCenter < bareCrosshairInnerRadius) {
+      float glowIntensity = saturate((innerOutlineFullRadius - distCenter) / (CircleInnerOutlineGlow - CircleInnerOutlineSharpness));
+      drawOpacity = distCenter > innerOutlineSharpRadius
+        ? CircleOutlineOpacity * XhairOpacity
+        : CIRCLE_INNER_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
+    }
+  }
+}
+
+void drawCrossXhair(int distX, int distY, out float4 draw, inout float drawOpacity) {
+  draw = float4(CrossColor, 1.0);
+  drawOpacity = XhairOpacity;
+
+  if (distX < distY) { // Vertical pixel
+
+    bool isXhairPixel = int(round(min(
+      max((CrossThickness * 2.0) - distX, 0) / max(CrossThickness * 2.0, 1),
+      max(BareCrossLength - distY, 0)
+    ))) == 1;
+
+    // Check if we should (not) render a xhair pixel
+    if (distY < CrossGap || !isXhairPixel) {
+      drawOpacity = 0;
+    }
+    // Check if we should render an outline pixel
+    if (CrossOutlineEnabled && !isXhairPixel && distY >= CrossGap) {
+
+      // Pixel distance from the bare crosshair (w/o the outline)
+      int bareCrossDistX = distX - CrossThickness;
+      int bareCrossDistY = distY - BareCrossLength;
+
+      // Pixel distance from the sharp outline
+      int sharpOutlineDistX = bareCrossDistX - CrossOutlineSharpness;
+      int sharpOutlineDistY = bareCrossDistY - CrossOutlineSharpness;
+
+      draw = float4(CrossOutlineColor, 1.0);
+
+      #ifdef __DEBUG__
+      if (sharpOutlineDistX == 0 && sharpOutlineDistY == 0) {
+        draw = float4(random1/255.0, random2/255.0, random3/255.0, 1);
+        return draw;
+      }
+      #endif
+
+      float2 relativePos = float2(max(bareCrossDistX, 0), max(bareCrossDistY, 0));
+      float dist = distance(relativePos, float2(0, 0));
+      if (dist < CrossOutlineSharpness) {
+        drawOpacity = XhairOpacity;
+      } else if (dist < (CrossOutlineSharpness + CrossOutlineGlow)) {
+        float glowIntensity = saturate(1.0 - ((dist - CrossOutlineSharpness) / float(CrossOutlineGlow)));
+        drawOpacity = CROSS_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
+      }
+
+      drawOpacity *= CrossOutlineOpacity * XhairOpacity;
+    }
+
+  } else { // Horizontal pixel
+
+    bool isXhairPixel = int(round(min(
+      max((CrossThickness * 2.0) - distY, 0) / max(CrossThickness * 2.0, 1),
+      max(BareCrossLength - distX, 0)
+    ))) == 1;
+
+    // Check if we should (not) render a xhair pixel
+    if (distX < CrossGap || !isXhairPixel) {
+      drawOpacity = 0;
+    }
+
+    // Check if we should render an outline pixel
+    if (CrossOutlineEnabled && !isXhairPixel && distX >= CrossGap) {
+
+      // Pixel distance from the bare crosshair (w/o the outline)
+      int bareCrossDistX = distX - BareCrossLength;
+      int bareCrossDistY = distY - CrossThickness;
+
+      // Pixel distance from the sharp outline
+      int sharpOutlineDistX = bareCrossDistX - CrossOutlineSharpness;
+      int sharpOutlineDistY = bareCrossDistY - CrossOutlineSharpness;
+
+      draw = float4(CrossOutlineColor, 1.0);
+
+      #ifdef __DEBUG__
+      if (sharpOutlineDistX == 0 && sharpOutlineDistY == 0) {
+        draw = float4(random1/255.0, random2/255.0, random3/255.0, 1);
+        return draw;
+      }
+      #endif
+
+      float2 relativePos = float2(max(bareCrossDistX, 0), max(bareCrossDistY, 0));
+      float dist = distance(relativePos, float2(0, 0));
+      if (dist < CrossOutlineSharpness) {
+        drawOpacity = XhairOpacity;
+      } else if (dist < (CrossOutlineSharpness + CrossOutlineGlow)) {
+        float glowIntensity = saturate(1.0 - ((dist - CrossOutlineSharpness) / float(CrossOutlineGlow)));
+        drawOpacity = CROSS_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
+      }
+
+      drawOpacity *= CrossOutlineOpacity * XhairOpacity;
+    }
+
+  }
+}
+
 float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target {
   float4 drawBackground = tex2D(ReShade::BackBuffer, texcoord);
 
@@ -364,134 +497,15 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
   float4 draw;
   float drawOpacity = 0;
 
-  if (XhairType == 1) { // Circle
-    draw = float4(CircleColor, 1.0);
-    drawOpacity = XhairOpacity;
-
-    bool isXhairPixel = int(round(
-      max(CircleThickness - abs(distCenter - (CircleGapRadius+CircleThickness / 2.0)), 0) / CircleThickness
-    )) == 1;
-
-    if (!isXhairPixel) {
-      drawOpacity = 0;
+  switch (XhairType) {
+    case 1: { // Circle
+      drawCircleXhair(distCenter, draw, drawOpacity);
+      break;
     }
-
-    if (CircleOutlineEnabled && !isXhairPixel) {
-
-      float bareCrosshairInnerRadius = CircleGapRadius;
-      float bareCrosshairOuterRadius = CircleGapRadius + CircleThickness;
-
-      float outerOutlineFullRadius = bareCrosshairOuterRadius + CircleOuterOutlineGlow;
-      float outerOutlineSharpRadius = bareCrosshairOuterRadius + CircleOuterOutlineSharpness;
-
-      float innerOutlineFullRadius = bareCrosshairInnerRadius - CircleInnerOutlineGlow;
-      float innerOutlineSharpRadius = bareCrosshairInnerRadius - CircleInnerOutlineSharpness;
-
-      draw = float4(CircleOutlineColor, 1.0);
-
-      if (distCenter < outerOutlineFullRadius && distCenter > CircleGapRadius) {
-        float glowIntensity = invertSaturate((outerOutlineFullRadius - distCenter) / (CircleOuterOutlineGlow - CircleOuterOutlineSharpness));
-        drawOpacity = distCenter < outerOutlineSharpRadius
-          ? CircleOutlineOpacity * XhairOpacity
-          : CIRCLE_OUTER_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
-      } else if (distCenter > innerOutlineFullRadius && distCenter < bareCrosshairInnerRadius) {
-        float glowIntensity = saturate((innerOutlineFullRadius - distCenter) / (CircleInnerOutlineGlow - CircleInnerOutlineSharpness));
-        drawOpacity = distCenter > innerOutlineSharpRadius
-          ? CircleOutlineOpacity * XhairOpacity
-          : CIRCLE_INNER_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
-      }
-    }
-  } else { // defaults to XhairType: Cross
-    draw = float4(CrossColor, 1.0);
-    drawOpacity = XhairOpacity;
-
-    if (distX < distY) { // Vertical pixel
-
-      bool isXhairPixel = int(round(min(
-        max((CrossThickness * 2.0) - distX, 0) / max(CrossThickness * 2.0, 1),
-        max(BareCrossLength - distY, 0)
-      ))) == 1;
-
-      // Check if we should (not) render a xhair pixel
-      if (distY < CrossGap || !isXhairPixel) {
-        drawOpacity = 0;
-      }
-      // Check if we should render an outline pixel
-      if (CrossOutlineEnabled && !isXhairPixel && distY >= CrossGap) {
-
-        // Pixel distance from the bare crosshair (w/o the outline)
-        int bareCrossDistX = distX - CrossThickness;
-        int bareCrossDistY = distY - BareCrossLength;
-
-        // Pixel distance from the sharp outline
-        int sharpOutlineDistX = bareCrossDistX - CrossOutlineSharpness;
-        int sharpOutlineDistY = bareCrossDistY - CrossOutlineSharpness;
-
-        draw = float4(CrossOutlineColor, 1.0);
-
-        #ifdef __DEBUG__
-        if (sharpOutlineDistX == 0 && sharpOutlineDistY == 0) {
-          draw = float4(random1/255.0, random2/255.0, random3/255.0, 1);
-          return draw;
-        }
-        #endif
-
-        float2 relativePos = float2(max(bareCrossDistX, 0), max(bareCrossDistY, 0));
-        float dist = distance(relativePos, float2(0, 0));
-        if (dist < CrossOutlineSharpness) {
-          drawOpacity = XhairOpacity;
-        } else if (dist < (CrossOutlineSharpness + CrossOutlineGlow)) {
-          float glowIntensity = saturate(1.0 - ((dist - CrossOutlineSharpness) / float(CrossOutlineGlow)));
-          drawOpacity = CROSS_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
-        }
-
-        drawOpacity *= CrossOutlineOpacity * XhairOpacity;
-      }
-
-    } else { // Horizontal pixel
-
-      bool isXhairPixel = int(round(min(
-        max((CrossThickness * 2.0) - distY, 0) / max(CrossThickness * 2.0, 1),
-        max(BareCrossLength - distX, 0)
-      ))) == 1;
-
-      // Check if we should (not) render a xhair pixel
-      if (distX < CrossGap || !isXhairPixel) {
-        drawOpacity = 0;
-      }
-
-      // Check if we should render an outline pixel
-      if (CrossOutlineEnabled && !isXhairPixel && distX >= CrossGap) {
-
-        // Pixel distance from the bare crosshair (w/o the outline)
-        int bareCrossDistX = distX - BareCrossLength;
-        int bareCrossDistY = distY - CrossThickness;
-
-        // Pixel distance from the sharp outline
-        int sharpOutlineDistX = bareCrossDistX - CrossOutlineSharpness;
-        int sharpOutlineDistY = bareCrossDistY - CrossOutlineSharpness;
-
-        draw = float4(CrossOutlineColor, 1.0);
-
-        #ifdef __DEBUG__
-        if (sharpOutlineDistX == 0 && sharpOutlineDistY == 0) {
-          draw = float4(random1/255.0, random2/255.0, random3/255.0, 1);
-          return draw;
-        }
-        #endif
-
-        float2 relativePos = float2(max(bareCrossDistX, 0), max(bareCrossDistY, 0));
-        float dist = distance(relativePos, float2(0, 0));
-        if (dist < CrossOutlineSharpness) {
-          drawOpacity = XhairOpacity;
-        } else if (dist < (CrossOutlineSharpness + CrossOutlineGlow)) {
-          float glowIntensity = saturate(1.0 - ((dist - CrossOutlineSharpness) / float(CrossOutlineGlow)));
-          drawOpacity = CROSS_OUTLINE_GLOW(glowIntensity) * XhairOpacity;
-        }
-
-        drawOpacity *= CrossOutlineOpacity * XhairOpacity;
-      }
-
+    case 0: // Cross
+    default: {
+      drawCrossXhair(distX, distY, draw, drawOpacity);
+      break;
     }
   }
 
