@@ -488,7 +488,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     return drawBackground;
   }
 
-  float2 center = float2((BUFFER_WIDTH / 2) - 1 + OffsetX, (BUFFER_HEIGHT / 2) - 1 + OffsetY);
+  float2 center = float2((BUFFER_WIDTH / 2) + OffsetX, (BUFFER_HEIGHT / 2) + OffsetY);
 
   int distX = abs(center.x - pos.x);
   int distY = abs(center.y - pos.y);
