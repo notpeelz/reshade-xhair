@@ -78,9 +78,9 @@ uniform float3 DotColor <
 uniform int DotSize <
   ui_category = CATEGORY_XHAIR_COMPOSITE;
   ui_type = "drag";
-  ui_min = 0; ui_max = 30;
+  ui_min = 1; ui_max = 30;
   ui_label = "Dot Size";
-> = 0;
+> = 1;
 
 uniform float DotOpacity <
   ui_category = CATEGORY_XHAIR_COMPOSITE;
@@ -513,7 +513,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     // Dot: Circle
     (DotType == 0 && distCenter <= DotSize) ||
     // Dot: Square
-    (DotType == 1 && distX <= DotSize && distY <= DotSize)
+    (DotType == 1 && distX <= (DotSize - 1) && distY <= (DotSize - 1))
   ) {
     draw = float4(DotColor, 1.0);
     drawOpacity = DotOpacity;
