@@ -56,7 +56,7 @@ A: reshade-xhair is unlikely to be the issue. It's probably a ReShade issue. Goo
 1. Download the latest version of the shaders (`shaders.zip`) from the [**Releases**](https://github.com/LouisTakePILLz/reshade-xhair/releases) tab on GitHub
 2. Navigate to the folder that contains the **game executable** (e.g. `steamapps/common/killingfloor2/Binaries/Win64` for Killing Floor 2)
 3. Extract the "shaders" folder (yes, the folder itself, **NOT the contents of it**) from `shaders.zip` to the game folder
-4. Install ReShade 3.x (3.4.1 is recommended) from [`reshade-install/ReShade_Setup_3.4.1.exe`](https://github.com/LouisTakePILLz/reshade-xhair/blob/master/reshade-install/ReShade_Setup_3.4.1.exe).
+4. Install ReShade from [reshade.me](https://reshade.me) (**ReShade 4.x is now supported!**).
 
     ![reshade-installer](./img/reshade_installer.png)
     1. Click "Select game" and select your game executable (e.g. `steamapps/common/killingfloor2/Binaries/Win64/KFGame.exe` for Killing Floor 2)
@@ -68,4 +68,4 @@ A: reshade-xhair is unlikely to be the issue. It's probably a ReShade issue. Goo
         3. Click "OK".
     5. Exit the ReShade installer.
 
-5. Launch your game and open the ReShade overlay (Shift-F2 by default).
+5. Launch your game and open the ReShade overlay by pressing the "Home" key (or Shift-F2 for ReShade <4).
