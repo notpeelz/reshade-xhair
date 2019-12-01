@@ -309,10 +309,13 @@ uniform bool rightMouseToggle <
 
 #define CROSS_OUTLINE_GLOW_RADIAL(intensity) (lerp(0.0, CrossOutlineGlowOpacity, intensity))
 // http://cubic-bezier.com/#.06,1.2,0,.9
-#define CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1(intensity) (cubicBezier(float2(.06, 1.2), float2(0, .9), intensity) * CrossOutlineGlowOpacity)
+#define CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1(intensity) (cubicBezier(float2(.06, 1.2), float2(0, .9), intensity))
 
-#define CROSS_OUTLINE_GLOW_CURVE CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1
-#define CROSS_OUTLINE_GLOW(intensity) (CrossOutlineGlowEnabled ? saturate(CROSS_OUTLINE_GLOW_CURVE(intensity)) : 0.0)
+#ifndef CROSS_OUTLINE_GLOW_CURVE
+  #define CROSS_OUTLINE_GLOW_CURVE CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1
+#endif
+
+#define CROSS_OUTLINE_GLOW(intensity) (CrossOutlineGlowEnabled ? saturate(CROSS_OUTLINE_GLOW_CURVE(intensity) * CrossOutlineGlowOpacity) : 0.0)
 
 #define CIRCLE_OUTER_OUTLINE_GLOW(intensity) (CircleOutlineGlowEnabled ? lerp(CircleOuterOutlineGlowOpacity, 0.0, intensity) : 0.0)
 #define CIRCLE_INNER_OUTLINE_GLOW(intensity) (CircleOutlineGlowEnabled ? lerp(CircleInnerOutlineGlowOpacity, 0.0, intensity) : 0.0)
@@ -497,16 +500,12 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
   float4 draw;
   float drawOpacity = 0;
 
-  switch (XhairType) {
-    case 1: { // Circle
-      drawCircleXhair(distCenter, draw, drawOpacity);
-      break;
-    }
-    case 0: // Cross
-    default: {
-      drawCrossXhair(distX, distY, draw, drawOpacity);
-      break;
-    }
+  // Circle
+  if (XhairType == 1) {
+    drawCircleXhair(distCenter, draw, drawOpacity);
+  // Cross
+  } else if (XhairType == 0) {
+    drawCrossXhair(distX, distY, draw, drawOpacity);
   }
 
   if (
