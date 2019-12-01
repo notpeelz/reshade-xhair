@@ -15,6 +15,12 @@
 #define MAX_CROSS_OUTLINE_THICKNESS 10
 #define MAX_CIRCLE_OUTLINE_THICKNESS 10.0
 
+#if !defined(__RESHADE__) || __RESHADE__ < 40001
+  #define UI_TYPE_SLIDER "drag"
+#else
+  #define UI_TYPE_SLIDER "slider"
+#endif
+
 /**
  * General Settings
  */
@@ -44,7 +50,7 @@ uniform int XhairType <
 
 uniform float XhairOpacity <
   ui_category = CATEGORY_GENERAL;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0.0; ui_max = 1.0;
   ui_label = "Xhair Opacity";
 > = 1.0;
@@ -77,14 +83,14 @@ uniform float3 DotColor <
 
 uniform int DotSize <
   ui_category = CATEGORY_XHAIR_COMPOSITE;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 1; ui_max = 30;
   ui_label = "Dot Size";
 > = 1;
 
 uniform float DotOpacity <
   ui_category = CATEGORY_XHAIR_COMPOSITE;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0.0; ui_max = 1.0;
   ui_label = "Dot Opacity";
 > = 1.0;
@@ -101,21 +107,21 @@ uniform float3 CrossColor <
 
 uniform int CrossLength <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 1; ui_max = 100;
   ui_label = "Length";
 > = 6;
 
 uniform int CrossThickness <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0; ui_max = 10;
   ui_label = "Thickness";
 > = 1;
 
 uniform int CrossGap <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0; ui_max = 10;
   ui_label = "Gap";
 > = 3;
@@ -142,14 +148,14 @@ uniform float3 CrossOutlineColor <
 
 uniform float CrossOutlineOpacity <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0.0; ui_max = 1.0;
   ui_label = "Outline Opacity";
 > = 1.0;
 
 uniform int f_crossOutlineSharpness <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0; ui_max = (MAX_CROSS_OUTLINE_THICKNESS);
   ui_step = 1;
   ui_label = "Outline Sharpness";
@@ -159,17 +165,17 @@ uniform int f_crossOutlineSharpness <
 
 uniform int f_crossOutlineGlow <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0; ui_max = MAX_CROSS_OUTLINE_THICKNESS;
   ui_step = 1;
   ui_label = "Outline Glow";
-  ui_tooltip = "Controls how many outline **gradient** pixels should be rendered around the sharp outline.";
+  ui_tooltip = "Controls how many outline glow pixels should be rendered around the sharp outline.";
 > = 2;
 #define CrossOutlineGlow (max(f_crossOutlineGlow, 0))
 
 uniform float CrossOutlineGlowOpacity <
   ui_category = CATEGORY_XHAIR_CROSS;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0.0; ui_max = 1.0;
   ui_step = 0.005;
   ui_label = "Outline Glow Opacity";
@@ -194,7 +200,7 @@ uniform float CircleThickness <
 
 uniform float CircleGapRadius <
   ui_category = CATEGORY_XHAIR_CIRCLE;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0.0; ui_max = 20.0;
   ui_label = "Gap Radius";
 > = 4.0;
@@ -221,7 +227,7 @@ uniform float3 CircleOutlineColor <
 
 uniform float CircleOutlineOpacity <
   ui_category = CATEGORY_XHAIR_CIRCLE;
-  ui_type = "drag";
+  ui_type = UI_TYPE_SLIDER;
   ui_min = 0.0; ui_max = 1.0;
   ui_label = "Outline Opacity";
 > = 1.0;
@@ -242,7 +248,7 @@ uniform float f_circleOuterOutlineGlow <
   ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
   ui_label = "Outer Outline Glow";
-  ui_tooltip = "Controls how many outline **gradient** pixels (outside of the circle)\nshould be rendered around the sharp outline.";
+  ui_tooltip = "Controls how many outline glow pixels (outside of the circle)\nshould be rendered around the sharp outline.";
 > = 2.0;
 #define CircleOuterOutlineGlow (max(f_circleOuterOutlineGlow, 0))
 
@@ -270,7 +276,7 @@ uniform float f_circleInnerOutlineGlow <
   ui_min = 0.0; ui_max = MAX_CIRCLE_OUTLINE_THICKNESS;
   ui_step = 0.01;
   ui_label = "Inner Outline Glow";
-  ui_tooltip = "Controls how many gradient outline pixels (inside of the circle)\nshould be rendered around the sharp outline.";
+  ui_tooltip = "Controls how many outline glow pixels (inside of the circle)\nshould be rendered around the sharp outline.";
 > = 2.0;
 #define CircleInnerOutlineGlow (max(f_circleInnerOutlineGlow, 0))
 
