@@ -44,7 +44,7 @@ uniform int OffsetY <
 uniform int XhairType <
   ui_category = CATEGORY_GENERAL;
   ui_type = "combo";
-  ui_items = "Cross\0Circle";
+  ui_items = "Cross\0Circle\0";
   ui_label = "Xhair Type";
 > = 0;
 
@@ -58,7 +58,7 @@ uniform float XhairOpacity <
 uniform int HideOnRMB <
   ui_category = CATEGORY_GENERAL;
   ui_type = "combo";
-  ui_items = "Hold\0Toggle\0Disabled";
+  ui_items = "Hold\0Toggle\0Disabled\0";
   ui_label = "Hide on RMB";
   ui_tooltip = "Controls whether the crosshair should be hidden when clicking the right mouse button.";
 > = 0;
@@ -70,7 +70,7 @@ uniform int HideOnRMB <
 uniform int DotType <
   ui_category = CATEGORY_XHAIR_COMPOSITE;
   ui_type = "combo";
-  ui_items = "Circle\0Square\0Disabled";
+  ui_items = "Circle\0Square\0Disabled\0";
   ui_label = "Use Dot";
   ui_tooltip = "Controls whether a dot should be rendered **on top** of the selected crosshair.";
 > = 2;
