@@ -2,7 +2,7 @@
  * reshade-xhair 1.3.0
  * ReShade Crosshair Shader Overlay
  *
- *  Copyright 2019 LouisTakePILLz
+ *  Copyright 2020 peelz
  */
 
 #include "Reshade.fxh"
