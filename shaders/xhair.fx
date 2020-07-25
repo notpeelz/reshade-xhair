@@ -44,7 +44,7 @@ uniform int OffsetY <
 uniform int XhairType <
   ui_category = CATEGORY_GENERAL;
   ui_type = "combo";
-  ui_items = "Cross\0Circle\0";
+  ui_items = "Cross\0Circle\0T-shaped\0";
   ui_label = "Xhair Type";
 > = 0;
 
@@ -391,26 +391,36 @@ void drawCircleXhair(float distCenter, out float4 draw, inout float drawOpacity)
 }
 
 void drawCrossXhair(int distX, int distY, out float4 draw, inout float drawOpacity) {
+  int absDistX = abs(distX);
+  int absDistY = abs(distY);
+
   draw = float4(CrossColor, 1.0);
   drawOpacity = XhairOpacity;
 
-  if (distX < distY) { // Vertical pixel
+  if (absDistX < absDistY) { // Vertical pixel
 
     bool isXhairPixel = int(round(min(
-      max((CrossThickness * 2.0) - distX, 0) / max(CrossThickness * 2.0, 1),
-      max(BareCrossLength - distY, 0)
+      max((CrossThickness * 2.0) - absDistX, 0) / max(CrossThickness * 2.0, 1),
+      max(BareCrossLength - absDistY, 0)
     ))) == 1;
 
+    // T-shape: don't render pixels above the gap
+    if (XhairType == 2 && distY >= CrossGap) {
+      drawOpacity = 0;
+      return;
+    }
+
     // Check if we should (not) render a xhair pixel
-    if (distY < CrossGap || !isXhairPixel) {
+    if (absDistY < CrossGap || !isXhairPixel) {
       drawOpacity = 0;
     }
+
     // Check if we should render an outline pixel
-    if (CrossOutlineEnabled && !isXhairPixel && distY >= CrossGap) {
+    if (CrossOutlineEnabled && !isXhairPixel && absDistY >= CrossGap) {
 
       // Pixel distance from the bare crosshair (w/o the outline)
-      int bareCrossDistX = distX - CrossThickness;
-      int bareCrossDistY = distY - BareCrossLength;
+      int bareCrossDistX = absDistX - CrossThickness;
+      int bareCrossDistY = absDistY - BareCrossLength;
 
       // Pixel distance from the sharp outline
       int sharpOutlineDistX = bareCrossDistX - CrossOutlineSharpness;
@@ -440,21 +450,21 @@ void drawCrossXhair(int distX, int distY, out float4 draw, inout float drawOpaci
   } else { // Horizontal pixel
 
     bool isXhairPixel = int(round(min(
-      max((CrossThickness * 2.0) - distY, 0) / max(CrossThickness * 2.0, 1),
-      max(BareCrossLength - distX, 0)
+      max((CrossThickness * 2.0) - absDistY, 0) / max(CrossThickness * 2.0, 1),
+      max(BareCrossLength - absDistX, 0)
     ))) == 1;
 
     // Check if we should (not) render a xhair pixel
-    if (distX < CrossGap || !isXhairPixel) {
+    if (absDistX < CrossGap || !isXhairPixel) {
       drawOpacity = 0;
     }
 
     // Check if we should render an outline pixel
-    if (CrossOutlineEnabled && !isXhairPixel && distX >= CrossGap) {
+    if (CrossOutlineEnabled && !isXhairPixel && absDistX >= CrossGap) {
 
       // Pixel distance from the bare crosshair (w/o the outline)
-      int bareCrossDistX = distX - BareCrossLength;
-      int bareCrossDistY = distY - CrossThickness;
+      int bareCrossDistX = absDistX - BareCrossLength;
+      int bareCrossDistY = absDistY - CrossThickness;
 
       // Pixel distance from the sharp outline
       int sharpOutlineDistX = bareCrossDistX - CrossOutlineSharpness;
@@ -487,11 +497,6 @@ void drawCrossXhair(int distX, int distY, out float4 draw, inout float drawOpaci
 float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Target {
   float4 drawBackground = tex2D(ReShade::BackBuffer, texcoord);
 
-  // Skip rendering if disabled
-  if (XhairType == 2) {
-    return drawBackground;
-  }
-
   // Don't render if RMB hiding is activated
   if (HideOnRMB == 0 && rightMouseDown || HideOnRMB == 1 && rightMouseToggle) {
     return drawBackground;
@@ -499,8 +504,8 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
 
   float2 center = float2((BUFFER_WIDTH / 2) + OffsetX, (BUFFER_HEIGHT / 2) + OffsetY);
 
-  int distX = abs(center.x - pos.x);
-  int distY = abs(center.y - pos.y);
+  int distX = center.x - pos.x;
+  int distY = center.y - pos.y;
   float distCenter = distance(center, pos);
 
   float4 draw;
@@ -509,8 +514,8 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
   // Circle
   if (XhairType == 1) {
     drawCircleXhair(distCenter, draw, drawOpacity);
-  // Cross
-  } else if (XhairType == 0) {
+  // Cross or T-shaped
+  } else if (XhairType == 0 || XhairType == 2) {
     drawCrossXhair(distX, distY, draw, drawOpacity);
   }
 
@@ -518,7 +523,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
     // Dot: Circle
     (DotType == 0 && distCenter <= DotSize) ||
     // Dot: Square
-    (DotType == 1 && distX <= (DotSize - 1) && distY <= (DotSize - 1))
+    (DotType == 1 && abs(distX) <= (DotSize - 1) && abs(distY) <= (DotSize - 1))
   ) {
     draw = float4(DotColor, 1.0);
     drawOpacity = DotOpacity;
