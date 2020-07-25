@@ -319,6 +319,8 @@ uniform bool rightMouseToggle <
 
 #define EULER (0.57721566490153286061)
 
+#define XOR(a, b) ((a) && !(b) || !(a) && (b))
+
 #define CROSS_OUTLINE_GLOW_RADIAL(intensity) (lerp(0.0, CrossOutlineGlowOpacity, intensity))
 // http://cubic-bezier.com/#.06,1.2,0,.9
 #define CROSS_OUTLINE_GLOW_BEZIER_CUBIC_PRESET_1(intensity) (cubicBezier(float2(.06, 1.2), float2(0, .9), intensity))
@@ -504,7 +506,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
   float4 drawBackground = tex2D(ReShade::BackBuffer, texcoord);
 
   // Don't render if RMB hiding is activated
-  if ((HideOnRMB == 0 && rightMouseDown || HideOnRMB == 1 && rightMouseToggle) ^ InvertHideOnRMB) {
+  if (XOR(HideOnRMB == 0 && rightMouseDown || HideOnRMB == 1 && rightMouseToggle, InvertHideOnRMB)) {
     return drawBackground;
   }
 
