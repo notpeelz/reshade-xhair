@@ -63,6 +63,12 @@ uniform int HideOnRMB <
   ui_tooltip = "Controls whether the crosshair should be hidden when clicking the right mouse button.";
 > = 0;
 
+uniform bool InvertHideOnRMB <
+  ui_category = CATEGORY_GENERAL;
+  ui_label = "Invert Hide on RMB";
+  ui_tooltip = "Inverts the behavior of 'Invert on RMB'";
+> = 0;
+
 /**
  * Composite Xhair Settings
  */
@@ -498,7 +504,7 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
   float4 drawBackground = tex2D(ReShade::BackBuffer, texcoord);
 
   // Don't render if RMB hiding is activated
-  if (HideOnRMB == 0 && rightMouseDown || HideOnRMB == 1 && rightMouseToggle) {
+  if ((HideOnRMB == 0 && rightMouseDown || HideOnRMB == 1 && rightMouseToggle) ^ InvertHideOnRMB) {
     return drawBackground;
   }
 
