@@ -31,7 +31,13 @@ A: Yes. Rather than rendering the crosshair outside the game, the injected ReSha
 
 Q: Will this get me banned?
 
-A: No, reshade-xhair will not get you banned by itself. **HOWEVER**, the program that it runs on (ReShade) is blacklisted by some games/anti-cheats. **Make sure you look up whether ReShade can be used safely on the desired game before installing it**. Use at your own risk! Killing Floor 2 and PayDay 2 should be safe to use with.
+A: No, reshade-xhair will not get you banned by itself. **HOWEVER**, the program that it runs on (ReShade) is blacklisted by some games/anti-cheats. **Make sure you look up whether ReShade can be used safely on the desired game before installing it**.
+
+Use at your own risk!
+
+For EA games such as Battlefield 4, it is against ToS to use an overlay of any type. Punkbuster and Fairfight take screenshots of the overlay and could result in official action being taken to ban your account. Additionally third party anticheats such as GGC, ACI, PBBans and BF4DB will ban you for usage. 
+
+Killing Floor 2 and PayDay 2 should be safe to use with.
 
 ---
 
