@@ -17,9 +17,6 @@ A heavily customizable, fullscreen-compatible crosshair overlay shader.
 | No FPS impact       | :heavy_check_mark:      |
 | Customizable        | :heavy_check_mark:      |
 | One-time setup      | :heavy_check_mark:      |
-| Automatic updates   | :heavy_check_mark: <sup>&#42;</sup> |
-
-&#42; through the Steam Workshop (only for Killing Floor 2)
 
 ## FAQ
 
@@ -37,13 +34,13 @@ Use at your own risk!
 
 For EA games such as Battlefield 4, it is against ToS to use an overlay of any type. Punkbuster and Fairfight take screenshots of the overlay and could result in official action being taken to ban your account. Additionally third party anticheats such as GGC, ACI, PBBans and BF4DB will ban you for usage. 
 
-Killing Floor 2 and PayDay 2 should be safe to use with.
+It should be safe to use this on Killing Floor 2 and PayDay 2.
 
 ---
 
 Q: How do I uninstall?
 
-A: Go to your game folder and delete any of the following files: `d3d8.dll`, `d3d9.dll`, `d3d10.dll`, `d3d11.dll`, `opengl.dll`, `dxgi.dll`.
+A: Run the ReShade installer, select your game then click "Uninstall". If you want to keep ReShade but not the xhair shader, you can delete `xhair.fx` from the `reshade-shaders/Shaders` directory located in your game folder.
 
 ---
 
@@ -59,19 +56,9 @@ A: reshade-xhair is unlikely to be the issue. It's probably a ReShade issue. Goo
 
 ## How to Install (for any game)
 
-1. Download the latest version of the shaders (`shaders.zip`) from the [**Releases**](https://github.com/LouisTakePILLz/reshade-xhair/releases) tab on GitHub
-2. Navigate to the folder that contains the **game executable** (e.g. `steamapps/common/killingfloor2/Binaries/Win64` for Killing Floor 2)
-3. Extract the "shaders" folder (yes, the folder itself, **NOT the contents of it**) from `shaders.zip` to the game folder
-4. Install ReShade from [reshade.me](https://reshade.me) (**ReShade 4.x is now supported!**).
-
-    ![reshade-installer](./img/reshade_installer.png)
-    1. Click "Select game" and select your game executable (e.g. `steamapps/common/killingfloor2/Binaries/Win64/KFGame.exe` for Killing Floor 2)
-    2. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10+" option.
-    3. Click "No" when prompted with a "Yes/No" dialog about downloading standard shaders.
-    4. Click "Edit ReShade settings".
-        1. Change the "Effects Path" to the `shaders` folder (the same folder from **Step 3**)
-        2. (optional) If you're familiar enough with ReShade, check "Skip Tutorial".
-        3. Click "OK".
-    5. Exit the ReShade installer.
-
+1. Install ReShade from [reshade.me](https://reshade.me)
+2. Click "Select game" and select your game executable (e.g. `steamapps/common/killingfloor2/Binaries/Win64/KFGame.exe` for Killing Floor 2)
+2. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10/11/12" option.
+4. In the field that says "Enter ZIP download link to custom repository here", enter the following URL: `https://github.com/louistakepillz/reshade-xhair/archive/master.zip`
+4. Exit the ReShade installer
 5. Launch your game and open the ReShade overlay by pressing the "Home" key (or Shift-F2 for ReShade <4).
