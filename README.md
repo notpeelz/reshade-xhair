@@ -21,7 +21,7 @@ A heavily customizable, fullscreen-compatible crosshair overlay shader.
 ## How to Install (for any game)
 
 1. Install ReShade from [reshade.me](https://reshade.me)
-2. Click "Select game" and select your game executable (e.g. `steamapps/common/killingfloor2/Binaries/Win64/KFGame.exe` for Killing Floor 2)
+2. Click "Select game" and select your game executable
 2. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10/11/12" option.
 4. In the field that says "Enter ZIP download link to custom repository here", enter the following URL: `https://github.com/notpeelz/reshade-xhair/archive/master.zip`
 4. Exit the ReShade installer
@@ -42,8 +42,6 @@ A: No, reshade-xhair will not get you banned by itself. **HOWEVER**, the program
 Use at your own risk!
 
 For EA games such as Battlefield 4, it is against ToS to use an overlay of any type. Punkbuster and Fairfight take screenshots of the overlay and could result in official action being taken to ban your account. Additionally third party anticheats such as GGC, ACI, PBBans and BF4DB will ban you for usage. 
-
-It should be safe to use this on Killing Floor 2 and PayDay 2.
 
 ---
 
