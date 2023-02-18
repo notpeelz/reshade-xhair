@@ -66,7 +66,7 @@ uniform int HideOnRMB <
 uniform bool InvertHideOnRMB <
   ui_category = CATEGORY_GENERAL;
   ui_label = "Invert Hide on RMB";
-  ui_tooltip = "Inverts the behavior of 'Invert on RMB'";
+  ui_tooltip = "Inverts the behavior of 'Hide on RMB'";
 > = 0;
 
 /**
