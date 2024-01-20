@@ -5,7 +5,12 @@
  *  Copyright 2020 peelz
  */
 
-#include "Reshade.fxh"
+namespace ReShade {
+  texture BackBufferTex : COLOR;
+  texture DepthBufferTex : DEPTH;
+  sampler BackBuffer { Texture = BackBufferTex; };
+  sampler DepthBuffer { Texture = DepthBufferTex; };
+}
 
 #define CATEGORY_GENERAL "General"
 #define CATEGORY_XHAIR_COMPOSITE "Composite Xhair"
@@ -540,9 +545,15 @@ float4 PS_Xhair(float4 pos : SV_Position, float2 texcoord : TEXCOORD) : SV_Targe
   return lerp(drawBackground, draw, drawOpacity);
 }
 
+void VS_Xhair(in uint id : SV_VertexID, out float4 position : SV_Position, out float2 texcoord : TEXCOORD) {
+  texcoord.x = (id == 2) ? 2.0 : 0.0;
+  texcoord.y = (id == 1) ? 2.0 : 0.0;
+  position = float4(texcoord * float2(2.0, -2.0) + float2(-1.0, 1.0), 0.0, 1.0);
+}
+
 technique xhair {
   pass HudPass {
-    VertexShader = PostProcessVS;
+    VertexShader = VS_Xhair;
     PixelShader = PS_Xhair;
   }
 }
