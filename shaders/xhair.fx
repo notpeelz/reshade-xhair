@@ -1,5 +1,5 @@
 /**
- * reshade-xhair 1.3.1
+ * reshade-xhair 1.3.2
  * ReShade Crosshair Shader Overlay
  *
  *  Copyright 2020 peelz
