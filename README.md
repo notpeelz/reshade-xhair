@@ -18,14 +18,15 @@ A heavily customizable, fullscreen-compatible crosshair overlay shader.
 | Customizable        | :heavy_check_mark:      |
 | One-time setup      | :heavy_check_mark:      |
 
-## How to Install (for any game)
+## How to install
 
-1. Install ReShade from [reshade.me](https://reshade.me)
-2. Click "Select game" and select your game executable
-2. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10/11/12" option.
-4. In the field that says "Enter ZIP download link to custom repository here", enter the following URL: `https://github.com/notpeelz/reshade-xhair/archive/master.zip`
-4. Exit the ReShade installer
-5. Launch your game and open the ReShade overlay by pressing the "Home" key (or Shift-F2 for ReShade <4).
+1. Install ReShade from [reshade.me](https://reshade.me).
+2. Click "Select game" and choose your game executable (take note of the path for step 6!).
+3. Check the appropriate game rendering API. If you don't know which one to pick, try the "Direct3D 10/11/12" option.
+4. Skip any extra shaders or options the ReShade installer might suggest (unless you know what you're doing).
+5. Download the latest shaders.zip from the [releases page](https://github.com/notpeelz/reshade-xhair/releases).
+6. Extract all files and folders from shaders.zip to the same folder you selected in step 2.
+7. Launch your game. If everything went correctly, you should see the crosshair appear. If you want to configure the crosshair, open the ReShade overlay by pressing the "Home" key.
 
 ## FAQ
 
